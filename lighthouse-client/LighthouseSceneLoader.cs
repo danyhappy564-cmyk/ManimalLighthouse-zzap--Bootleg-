@@ -378,6 +378,7 @@ internal static class LighthouseSceneLoader
         }
     }
     internal static bool Owns(string sceneName) => SceneNames.Contains(sceneName);
+    internal static bool OwnsAny => SceneNames.Count > 0;
     internal static bool IsNativeDonor(string sceneName) => NativeDonorScenes.Contains(sceneName);
     internal static bool IsNativeAmbienceDonor(string sceneName) => IsNativeDonor(sceneName) && sceneName == "Lighthouse_Sound";
     public static void ReleaseIfUnused()

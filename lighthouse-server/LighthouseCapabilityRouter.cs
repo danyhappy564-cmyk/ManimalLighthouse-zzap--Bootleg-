@@ -29,7 +29,7 @@ public sealed class LighthouseCapabilityRouter(JsonUtil jsonUtil) : StaticRouter
 
         foreach (var file in manifest.ServerFiles)
         {
-            ManifestRules.VerifyFile(root, file.Path, file.Sha256);
+            ManifestRules.VerifyServerFile(root, file.Path, file.Sha256);
         }
 
         capability.ContentId = manifest.ContentId;

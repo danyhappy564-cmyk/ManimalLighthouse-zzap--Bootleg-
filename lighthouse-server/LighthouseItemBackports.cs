@@ -41,7 +41,7 @@ public sealed class LighthouseItemBackports(TemplateTable templates, JsonUtil js
         {
             if (file.Path != LighthouseItemRegistration.RelativePath) { continue; }
 
-            ManifestRules.VerifyFile(root, file.Path, file.Sha256);
+            ManifestRules.VerifyServerFile(root, file.Path, file.Sha256);
             declared = true;
             break;
         }

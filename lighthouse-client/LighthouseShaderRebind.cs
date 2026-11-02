@@ -211,6 +211,12 @@ internal static class LighthouseShaderRebind
 
     internal static void BeforeAreaInit(AreaLight __instance)
     {
+        // zzap: outside a Lighthouse raid nothing can match, so skip the native gameObject/scene lookups too.
+        if (!LighthouseSceneLoader.OwnsAny)
+        {
+            return;
+        }
+
         var scene = __instance.gameObject.scene;
         if (ForeignScenes.Contains(scene.handle))
         {

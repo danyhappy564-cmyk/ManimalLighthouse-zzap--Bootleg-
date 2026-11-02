@@ -224,6 +224,45 @@ public static class ManifestRules
         }
     }
 
+    // zzap: the server database json (locations, items) is meant to be tweakable. An edited file used to fail
+    // VerifyFile, the server never became ready and the game could not start. An edited .json now only warns;
+    // a missing file or a changed non-json payload still fails. Checked files are remembered by size and write
+    // time so they are not hashed again on every capability request.
+    private static readonly Dictionary<string, (long Length, DateTime Written, string Expected)> CheckedServerFiles =
+        new Dictionary<string, (long Length, DateTime Written, string Expected)>(StringComparer.OrdinalIgnoreCase);
+
+    public static void VerifyServerFile(string root, string relative, string expected)
+    {
+        ValidateHash(expected);
+
+        var path = Resolve(root, relative);
+        var info = new FileInfo(path);
+
+        if (!info.Exists)
+        {
+            throw new InvalidDataException("Missing Lighthouse payload: " + relative);
+        }
+
+        var stamp = (info.Length, info.LastWriteTimeUtc, expected);
+
+        lock (CheckedServerFiles)
+        {
+            if (CheckedServerFiles.TryGetValue(path, out var known) && known == stamp) { return; }
+        }
+
+        if (Hash(path) != expected)
+        {
+            if (!relative.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidDataException("Missing or mismatched Lighthouse payload: " + relative);
+            }
+
+            Console.WriteLine("[Manimal Lighthouse] " + relative + " differs from the shipped file (edited), using it as is.");
+        }
+
+        lock (CheckedServerFiles) { CheckedServerFiles[path] = stamp; }
+    }
+
     public static void CheckCapability(ContentManifest manifest, string hash, ServerCapability capability)
     {
         if (capability is not { Schema: 1 }

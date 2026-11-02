@@ -74,7 +74,7 @@ public static class LighthouseLocationData
                 throw new InvalidDataException("Missing Lighthouse database declaration: " + relative);
             }
 
-            ManifestRules.VerifyFile(root, relative, declaration.Sha256);
+            ManifestRules.VerifyServerFile(root, relative, declaration.Sha256);
 
             var text = File.ReadAllText(ManifestRules.Resolve(root, relative));
             using var document = JsonDocument.Parse(text);
