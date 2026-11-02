@@ -10,6 +10,14 @@ internal static class LighthouseShaderRebind
     private static readonly Dictionary<string, Shader> NativeShaders = new(StringComparer.Ordinal);
     private static readonly Dictionary<Material, string> Materials = new();
     private static readonly HashSet<string> ReportedMissing = new(StringComparer.Ordinal);
+    // zzap: scene handles already known not to be Lighthouse's. AreaLight.Init runs every frame for every area light
+    // (Labs: ~140 lights, ~800k calls a minute) and Scene.name allocates a new string on each read - 20-58 MB a minute
+    // of garbage on Labs. Cleared when the owned scene names change.
+    private static readonly HashSet<int> ForeignScenes = new();
+
+    internal static void ForgetForeignScenes() => ForeignScenes.Clear();
+
+    internal static void ForgetScene(Scene scene) => ForeignScenes.Remove(scene.handle);
     private static string? _terrainError;
 
     internal static void RegisterRenderingBundle(AssetBundle bundle)
@@ -203,8 +211,15 @@ internal static class LighthouseShaderRebind
 
     internal static void BeforeAreaInit(AreaLight __instance)
     {
-        if (!LighthouseSceneLoader.Owns(__instance.gameObject.scene.name))
+        var scene = __instance.gameObject.scene;
+        if (ForeignScenes.Contains(scene.handle))
         {
+            return;
+        }
+
+        if (!LighthouseSceneLoader.Owns(scene.name))
+        {
+            ForeignScenes.Add(scene.handle);
             return;
         }
 

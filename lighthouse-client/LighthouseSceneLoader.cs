@@ -266,6 +266,7 @@ internal static class LighthouseSceneLoader
                 });
                 SceneNames.Add(Path.GetFileNameWithoutExtension(mapping.ReplacementPath));
             }
+            LighthouseShaderRebind.ForgetForeignScenes();
 
             _ownedPreset = UnityEngine.Object.Instantiate(native);
             InGameMemoryManagement.GCEnabled = true;
@@ -370,6 +371,7 @@ internal static class LighthouseSceneLoader
     }
     public static void SceneUnloaded(Scene scene)
     {
+        LighthouseShaderRebind.ForgetScene(scene);
         if (SceneNames.Contains(scene.name) || NativeDonorScenes.Contains(scene.name))
         {
             ReleaseIfUnused();
@@ -408,6 +410,7 @@ internal static class LighthouseSceneLoader
 
         Bundles.Clear();
         SceneNames.Clear();
+        LighthouseShaderRebind.ForgetForeignScenes();
         NativeDonorScenes.Clear();
         LighthouseSidecars.Clear();
         LighthouseShaderRebind.Clear();
