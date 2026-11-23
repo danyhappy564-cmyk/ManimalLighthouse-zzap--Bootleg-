@@ -10,14 +10,15 @@ internal static class LighthouseShaderRebind
     private static readonly Dictionary<string, Shader> NativeShaders = new(StringComparer.Ordinal);
     private static readonly Dictionary<Material, string> Materials = new();
     private static readonly HashSet<string> ReportedMissing = new(StringComparer.Ordinal);
-    // zzap: scene handles already known not to be Lighthouse's. AreaLight.Init runs every frame for every area light
-    // (Labs: ~140 lights, ~800k calls a minute) and Scene.name allocates a new string on each read - 20-58 MB a minute
-    // of garbage on Labs. Cleared when the owned scene names change.
-    private static readonly HashSet<int> ForeignScenes = new();
+    // zzap: scene handle -> "is a Lighthouse scene". AreaLight.Init runs every frame for every area light and
+    // Scene.name allocates a new string on each read (Labs before 1.0.8: 20-58 MB a minute of garbage). 1.0.8 only
+    // patches Init during a Lighthouse raid, but there the Lighthouse lights still read the name every frame, so
+    // both answers are remembered. Cleared when the owned scene names change, a handle is dropped on unload.
+    private static readonly Dictionary<int, bool> KnownScenes = new();
 
-    internal static void ForgetForeignScenes() => ForeignScenes.Clear();
+    internal static void ForgetForeignScenes() => KnownScenes.Clear();
 
-    internal static void ForgetScene(Scene scene) => ForeignScenes.Remove(scene.handle);
+    internal static void ForgetScene(Scene scene) => KnownScenes.Remove(scene.handle);
     private static string? _terrainError;
 
     internal static void RegisterRenderingBundle(AssetBundle bundle)
@@ -218,14 +219,14 @@ internal static class LighthouseShaderRebind
         }
 
         var scene = __instance.gameObject.scene;
-        if (ForeignScenes.Contains(scene.handle))
+        if (!KnownScenes.TryGetValue(scene.handle, out var owned))
         {
-            return;
+            owned = LighthouseSceneLoader.Owns(scene.name);
+            KnownScenes[scene.handle] = owned;
         }
 
-        if (!LighthouseSceneLoader.Owns(scene.name))
+        if (!owned)
         {
-            ForeignScenes.Add(scene.handle);
             return;
         }
 
