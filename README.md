@@ -10,7 +10,7 @@
 - **Original Author:** Manimal (danauraborealis)
 - **Original Repository:** ManimalLighthouse
 - **Original Link:** https://github.com/danauraborealis/ManimalLighthouse
-- **License:** 원본 저장소에 라이선스 파일 없음 — 원본 저장소 참고
+- **License:** MIT (원본 Forge 페이지 표기, 원본 저장소에는 라이선스 파일 없음)
 - **This Port By:** R_F (danyhappy564-cmyk) — unofficial, AI-assisted port. Not affiliated with or endorsed by the original author.
 
 1. **Reflection & Take-Downs:** I deeply reflect on the ECOT incident. As an AI-assisted "vibe coder," I will immediately delete files if the original authors ask.
@@ -27,10 +27,12 @@
 **원본 모드를 먼저 받아 설치한 뒤, 이 저장소의 압축을 그 위에 덮어써야 작동합니다.**
 
 - 원본 모드: https://sp-mod.com/mod/3022/manimals-10-lighthouse-rework-backport
+- **zzap-v2는 원본 1.0.8용입니다.** 원본 1.0.7 위에 zzap-v2를 덮으면 맞지 않습니다(1.0.7은 zzap-v1).
 
 This build only **overwrites the original Manimal's 1.0 Lighthouse Rework Backport** - it does not contain the original files (map bundles etc.).
 **Install the original mod first, then extract this build over it.** Original: https://sp-mod.com/mod/3022/manimals-10-lighthouse-rework-backport
+**zzap-v2 is for original 1.0.8** (zzap-v1 was for 1.0.7).
 
 ## 변경 이력 (zzap)
 
-전체 변경 이력 3개는 [`changelog/`](changelog/) 폴더에 10개씩 나눠 있습니다 (번호가 클수록 최신, 최신 파일: [`CHANGELOG-001.md`](changelog/CHANGELOG-001.md)). 릴리즈별 요약은 [Releases](../../releases).
+전체 변경 이력 5개는 [`changelog/`](changelog/) 폴더에 10개씩 나눠 있습니다 (번호가 클수록 최신, 최신 파일: [`CHANGELOG-001.md`](changelog/CHANGELOG-001.md)). 릴리즈별 요약은 [Releases](../../releases).
